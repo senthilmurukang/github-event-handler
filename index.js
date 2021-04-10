@@ -8,7 +8,7 @@ exports.issue = (req, res) => {
             res.status(403).send('Forbidden!');
             break;
         case 'POST':
-            console.log(`Request Body: ${req.body.toString()}`);
+            console.log(`Request Body: ${JSON.stringify(req.body.toString())}`);
             res.status(200).send('It is working!');
             break;
         default:
