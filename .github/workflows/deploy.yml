@@ -27,4 +27,4 @@ jobs:
           export_default_credentials: true
 
       - name: Deploy Cloud Function
-        run: gcloud functions deploy issue --runtime nodejs12 --trigger-http --allow-unauthenticated --project="${{ secrets.GCP_PROJECT_ID }}"
+        run: gcloud functions deploy issue --runtime nodejs12 --set-env-vars GCP_PROJECT_ID=${{ secrets.GCP_PROJECT_ID }} --trigger-http --allow-unauthenticated --project="${{ secrets.GCP_PROJECT_ID }}"

@@ -3,15 +3,16 @@ const { Octokit } = require("@octokit/core");
 const { Webhooks } = require("@octokit/webhooks");
 const fs = require('fs');
 const crc32c = require('fast-crc32c');
+let WEBHOOK_SECRET, GITHUB_APP_CREDENTIALS;
 
 const { KeyManagementServiceClient } = require('@google-cloud/kms');
 
-const projectId = process.env.GCP_PROJECT;
+const projectId = process.env.GCP_PROJECT_ID;
 const locationId = 'global';
 const keyRingId = 'production';
 const keyId = 'common';
 
-const getGitHubAppCredentials = () => {
+const getGitHubAppCredentials = async () => {
     const client = new KeyManagementServiceClient();
     const keyName = client.cryptoKeyPath(projectId, locationId, keyRingId, keyId);
     const ciphertext = fs.readFileSync('./github-app-credentials.json.encrypted');
@@ -79,7 +80,16 @@ const handlePostRequest = async (req, res) => {
 };
 
 exports.issue = async (req, res) => {
-    const {webhooksSecret: WEBHOOK_SECRET, ...GITHUB_APP_CREDENTIALS} = JSON.parse(getGitHubAppCredentials());
+    const decryptedGitHubAppCredentials = await getGitHubAppCredentials();
+    const gitHubAppCredentialsJSON = JSON.parse(decryptedGitHubAppCredentials);
+    WEBHOOK_SECRET = gitHubAppCredentialsJSON.webhooksSecret;
+    GITHUB_APP_CREDENTIALS = {
+        appId: gitHubAppCredentialsJSON.appId,
+        privateKey: gitHubAppCredentialsJSON.privateKey,
+        clientId: gitHubAppCredentialsJSON.clientId,
+        clientSecret: gitHubAppCredentialsJSON.clientSecret,
+        installationId: gitHubAppCredentialsJSON.installationId
+    };
     switch (req.method) {
         case 'GET':
             handleGetRequest(req, res);
