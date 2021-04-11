@@ -5,6 +5,7 @@
   "main": "index.js",
   "scripts": {
     "unit-test": "mocha test/index.test.js test/*unit*test.js test/*integration*test.js --timeout=2000 --exit",
+    "start": "npx functions-framework --target=issue",
     "system-test": "mocha test/*system*test.js --timeout=600000 --exit",
     "all-test": "npm run unit-test && npm run system-test",
     "test": "npm -- run all-test"
@@ -24,7 +25,12 @@
   "homepage": "https://github.com/senthilmurukang/github-event-handler#readme",
   "dependencies": {
     "@google-cloud/debug-agent": "^5.0.0",
-    "escape-html": "^1.0.3"
+    "@google-cloud/kms": "^2.3.1",
+    "@octokit/auth": "^3.0.3",
+    "@octokit/core": "^3.4.0",
+    "@octokit/webhooks": "^8.12.1",
+    "fast-crc32c": "^2.0.0",
+    "fs": "0.0.1-security"
   },
   "devDependencies": {
     "@google-cloud/functions-framework": "^1.1.1",
