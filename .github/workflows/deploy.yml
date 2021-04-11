@@ -17,6 +17,14 @@ jobs:
 
       - name: Setup Node.js environment
         uses: actions/setup-node@v2.1.5
-        
-      - name: Print node version
-        run: node --version
+
+      - name: Set up Cloud SDK
+        uses: google-github-actions/setup-gcloud@master
+        with:
+          version: 'latest'
+          project_id: ${{ secrets.GCP_PROJECT_ID }}
+          service_account_key: ${{ secrets.GCP_SA_CREDENTIALS }}
+          export_default_credentials: true
+
+      - name: Deploy Cloud Function
+        run: gcloud functions deploy issue --runtime nodejs12 --set-env-vars GCP_PROJECT_ID=${{ secrets.GCP_PROJECT_ID }} --trigger-http --allow-unauthenticated --project="${{ secrets.GCP_PROJECT_ID }}"
